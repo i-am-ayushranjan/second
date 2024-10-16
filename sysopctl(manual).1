@@ -1,0 +1,102 @@
+.TH SYOPCTL 1 "October 2024" "v0.1.0" "System Operations Control"
+.SH NAME
+sysopctl \- System Operations Control Tool
+.SH SYNOPSIS
+.B sysopctl
+.RI [ command ]
+.RI [ options ]
+.SH DESCRIPTION
+sysopctl is a command-line tool for managing system services, monitoring system performance, analyzing logs, managing disk usage, and performing backups.
+
+.SH COMMANDS
+.TP
+.B --version
+Display the version of sysopctl.
+.TP
+.B --help
+Display help information about using sysopctl and its commands.
+.TP
+.B service
+Manage system services.
+.TP
+.B system
+Show system information.
+.TP
+.B disk
+Manage disk operations.
+.TP
+.B process
+Monitor system processes.
+.TP
+.B logs
+Analyze system logs.
+.TP
+.B backup
+Create backups of specified directories.
+
+.SH SERVICE COMMANDS
+.TP
+.B service list
+List all currently running services.
+.TP
+.B service start <name>
+Start a specified service.
+.TP
+.B service stop <name>
+Stop a specified service.
+
+.SH SYSTEM COMMANDS
+.TP
+.B system load
+Display the current system load averages.
+
+.SH DISK COMMANDS
+.TP
+.B disk usage
+Display disk usage statistics.
+
+.SH PROCESS COMMANDS
+.TP
+.B process monitor
+Monitor running processes in real-time.
+
+.SH LOGS COMMANDS
+.TP
+.B logs analyze
+Analyze recent critical system logs.
+
+.SH BACKUP COMMANDS
+.TP
+.B backup <path>
+Create a backup of the specified path in the user's home directory.
+
+.SH EXAMPLES
+.TP
+To display the version:
+.nf
+sysopctl --version
+.fi
+.TP
+To list all running services:
+.nf
+sysopctl service list
+.fi
+.TP
+To start the nginx service:
+.nf
+sysopctl service start nginx
+.fi
+.TP
+To analyze system logs:
+.nf
+sysopctl logs analyze
+.fi
+.TP
+To back up the Desktop directory:
+.nf
+sysopctl backup ~/Desktop
+.fi
+
+.SH AUTHOR
+Written by Ayush Ranjan.
+

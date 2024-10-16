@@ -1,0 +1,136 @@
+#!/bin/bash
+
+# Version of the tool
+VERSION="v0.1.0"
+
+# Function to display error message and exit
+handle_error() {
+  echo "Error: $1"
+  exit 1
+}
+
+# Check the first argument and act accordingly
+case $1 in
+  --version)
+    echo "sysopctl version $VERSION"
+    ;;
+  --help)
+    echo "Usage: sysopctl [command] [options]"
+    echo "Commands:"
+    echo "  --version                 Show version."
+    echo "  --help                    Show help."
+    echo "  service list              List running services."
+    echo "  service start <name>     Start a service."
+    echo "  service stop <name>      Stop a service."
+    echo "  system load               Show system load."
+    echo "  disk usage                Show disk usage."
+    echo "  process monitor           Monitor system processes."
+    echo "  logs analyze              Analyze recent logs."
+    echo "  backup <path>            Backup a directory."
+    ;;
+  service)
+    case $2 in
+      list)
+        echo "Listing all running services..."
+        systemctl list-units --type=service --no-pager
+        ;;
+      start)
+        if [ -z "$3" ]; then
+          handle_error "Please provide a service name to start."
+        fi
+
+        echo "Starting service: $3"
+        if systemctl start "$3"; then
+          echo "Service $3 started."
+        else
+          handle_error "Failed to start service: $3. Check if the service exists and you have permissions."
+        fi
+        ;;
+      stop)
+        if [ -z "$3" ]; then
+          handle_error "Please provide a service name to stop."
+        fi
+
+        echo "Stopping service: $3"
+        if systemctl stop "$3"; then
+          echo "Service $3 stopped."
+        else
+          handle_error "Failed to stop service: $3. Check if the service exists and you have permissions."
+        fi
+        ;;
+      *)
+        handle_error "Unknown service command. Use: sysopctl service list, sysopctl service start <service-name>, or sysopctl service stop <service-name>"
+        ;;
+    esac
+    ;;
+  system)
+    case $2 in
+      load)
+        echo "Displaying system load averages..."
+        uptime
+        ;;
+      *)
+        handle_error "Unknown system command. Use: sysopctl system load"
+        ;;
+    esac
+    ;;
+  disk)
+    case $2 in
+      usage)
+        echo "Displaying disk usage..."
+        df -h
+        ;;
+      *)
+        handle_error "Unknown disk command. Use: sysopctl disk usage"
+        ;;
+    esac
+    ;;
+  process)
+    case $2 in
+      monitor)
+        echo "Monitoring system processes..."
+        top
+        ;;
+      *)
+        handle_error "Unknown process command. Use: sysopctl process monitor"
+        ;;
+    esac
+    ;;
+  logs)
+    case $2 in
+      analyze)
+        echo "Analyzing recent critical system logs..."
+        journalctl -p 3 -xb
+        ;;
+      *)
+        handle_error "Unknown logs command. Use: sysopctl logs analyze"
+        ;;
+    esac
+    ;;
+  backup)
+    if [ -z "$2" ]; then
+      handle_error "Please provide a path to backup. Usage: sysopctl backup <path>"
+    fi
+
+    BACKUP_PATH="$2"
+    if [ ! -e "$BACKUP_PATH" ]; then
+      handle_error "Backup path does not exist: $BACKUP_PATH"
+    fi
+
+    TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+    BACKUP_DIR="$HOME/backup_$TIMESTAMP"
+
+    echo "Backing up $BACKUP_PATH to $BACKUP_DIR..."
+    mkdir -p "$BACKUP_DIR" && rsync -av --progress "$BACKUP_PATH" "$BACKUP_DIR"
+
+    if [ $? -eq 0 ]; then
+      echo "Backup completed successfully: $BACKUP_DIR"
+    else
+      handle_error "Backup failed."
+    fi
+    ;;
+  *)
+    handle_error "Unknown command. Use: sysopctl --version, sysopctl --help, sysopctl service list, sysopctl service start/stop <service-name>, sysopctl system load, sysopctl disk usage, sysopctl process monitor, sysopctl logs analyze, or sysopctl backup <path>"
+    ;;
+esac
+
